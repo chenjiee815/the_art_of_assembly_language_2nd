@@ -1,0 +1,1530 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>第四章 常量、变量与数据类型 &mdash; 《汇编语言编程艺术》第2版笔记 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="《汇编语言编程艺术》第2版笔记 1.0 documentation" href="index.html" />
+    <link rel="prev" title="第三章 内存访问与结构" href="chapter_03.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="chapter_03.html" title="第三章 内存访问与结构"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">《汇编语言编程艺术》第2版笔记 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="id1">
+<h1><a class="toc-backref" href="#id27">第四章 常量、变量与数据类型</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id27">第四章 常量、变量与数据类型</a><ul>
+<li><a class="reference internal" href="#intmul-integer-multiply" id="id28">intmul(integer multiply)</a></li>
+<li><a class="reference internal" href="#bound" id="id29">bound</a></li>
+<li><a class="reference internal" href="#into-interrupt-on-overflow" id="id30">into(interrupt on overflow)</a></li>
+<li><a class="reference internal" href="#hla" id="id31">HLA常量和数值声明</a><ul>
+<li><a class="reference internal" href="#id2" id="id32">字符串常量和字符常量</a></li>
+<li><a class="reference internal" href="#id3" id="id33">字符串常量和文本常量</a></li>
+<li><a class="reference internal" href="#id4" id="id34">常量表达式</a></li>
+<li><a class="reference internal" href="#val" id="id35">val段</a></li>
+<li><a class="reference internal" href="#id5" id="id36">在程序的任意位置修改val段中的对象</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#type" id="id37">type段</a></li>
+<li><a class="reference internal" href="#enum" id="id38">枚举类型(enum)</a></li>
+<li><a class="reference internal" href="#id6" id="id39">指针数据类型</a><ul>
+<li><a class="reference internal" href="#id7" id="id40">指针常量和指针常量表达式</a></li>
+<li><a class="reference internal" href="#realloc" id="id41">realloc</a></li>
+<li><a class="reference internal" href="#id8" id="id42">常见问题</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id9" id="id43">字符串</a><ul>
+<li><a class="reference internal" href="#id10" id="id44">以0结尾的字符串</a></li>
+<li><a class="reference internal" href="#id11" id="id45">长度前缀字符串</a></li>
+<li><a class="reference internal" href="#id12" id="id46">HLA字符串</a></li>
+<li><a class="reference internal" href="#str-alloc" id="id47">str.alloc</a></li>
+<li><a class="reference internal" href="#stdin-a-gets" id="id48">stdin.a_gets</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id13" id="id49">访问字符串中的字符</a></li>
+<li><a class="reference internal" href="#id14" id="id50">其它操作字符串函数</a><ul>
+<li><a class="reference internal" href="#id15" id="id51">引用复制</a></li>
+<li><a class="reference internal" href="#str-cpy" id="id52">str.cpy</a></li>
+<li><a class="reference internal" href="#str-a-cpy" id="id53">str.a_cpy</a></li>
+<li><a class="reference internal" href="#str-length" id="id54">str.length</a></li>
+<li><a class="reference internal" href="#str-cat-str-a-cat" id="id55">str.cat&amp;&amp;str.a_cat</a></li>
+<li><a class="reference internal" href="#str-insert-str-a-insert" id="id56">str.insert&amp;&amp;str.a_insert</a></li>
+<li><a class="reference internal" href="#str-delete-str-a-delete" id="id57">str.delete&amp;&amp;str.a_delete</a></li>
+<li><a class="reference internal" href="#str-substr-str-a-substr" id="id58">str.substr&amp;&amp;str.a_substr</a></li>
+<li><a class="reference internal" href="#id16" id="id59">字符串比较</a></li>
+<li><a class="reference internal" href="#str-index" id="id60">str.index</a></li>
+<li><a class="reference internal" href="#str-put" id="id61">str.put</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id17" id="id62">字符集</a><ul>
+<li><a class="reference internal" href="#bt" id="id63">bt系列指令</a></li>
+<li><a class="reference internal" href="#id18" id="id64">HLA字符集常量和字符集表达式</a></li>
+<li><a class="reference internal" href="#id19" id="id65">HLA标准库对字符集的支持</a><ul>
+<li><a class="reference internal" href="#cs-empty" id="id66">cs.empty</a></li>
+<li><a class="reference internal" href="#cs-cpy" id="id67">cs.cpy</a></li>
+<li><a class="reference internal" href="#cs-unionchar" id="id68">cs.unionChar</a></li>
+<li><a class="reference internal" href="#cs-strtocset" id="id69">cs.strToCset</a></li>
+<li><a class="reference internal" href="#cs-removechar" id="id70">cs.removeChar</a></li>
+<li><a class="reference internal" href="#cs-rangechar" id="id71">cs.rangeChar</a></li>
+<li><a class="reference internal" href="#id20" id="id72">cs.strToCSet</a></li>
+<li><a class="reference internal" href="#cs-unionstr" id="id73">cs.unionstr</a></li>
+<li><a class="reference internal" href="#cs-setunion" id="id74">cs.setunion</a></li>
+<li><a class="reference internal" href="#cs-intersection" id="id75">cs.intersection</a></li>
+<li><a class="reference internal" href="#cs-difference" id="id76">cs.difference</a></li>
+<li><a class="reference internal" href="#cs-isempty" id="id77">cs.IsEmpty</a></li>
+<li><a class="reference internal" href="#cs-member" id="id78">cs.member</a></li>
+<li><a class="reference internal" href="#cs-set" id="id79">cs.*set</a></li>
+<li><a class="reference internal" href="#cs-eq-cs-ne" id="id80">cs.eq&amp;&amp;cs.ne</a></li>
+<li><a class="reference internal" href="#cs-extract" id="id81">cs.extract</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id21" id="id82">HLA中字符集的使用</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id22" id="id83">数组</a></li>
+<li><a class="reference internal" href="#id23" id="id84">一维数组</a><ul>
+<li><a class="reference internal" href="#id24" id="id85">数组排序</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id25" id="id86">多维数组</a><ul>
+<li><a class="reference internal" href="#id26" id="id87">以行为主</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="intmul-integer-multiply">
+<h2><a class="toc-backref" href="#id28">intmul(integer multiply)</a><a class="headerlink" href="#intmul-integer-multiply" title="Permalink to this headline">¶</a></h2>
+<p>有符号整型相乘指令。</p>
+<div class="highlight-asm"><div class="highlight"><pre>intmul(constant, destreg16);
+intmul(constant, destreg32);
+</pre></div>
+</div>
+<p>上面语句的语义相当于高级语言里的：</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">destreg</span> <span class="o">=</span> <span class="n">destreg</span> <span class="o">*</span> <span class="n">constant</span><span class="p">;</span>
+<span class="n">destreg</span> <span class="o">*=</span> <span class="n">constant</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>intmul(constant, srcreg16, destreg16);
+intmul(constant, srcmem16, destreg16);
+
+intmul(constant, srcreg32, destreg32);
+intmul(constant, srcmem32, destreg32);
+</pre></div>
+</div>
+<p>上面语句的语义相当于高级语言里的：</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">dest</span> <span class="o">=</span> <span class="n">src</span> <span class="o">*</span> <span class="n">constant</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>intmul(srcreg16, destreg16);
+intmul(srcmem16, destreg16);
+
+intmul(srcreg32, destreg32);
+intmul(srcmem32, destreg32);
+</pre></div>
+</div>
+<p>上面语句的语义相当于高级语言里的：</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">dest</span> <span class="o">=</span> <span class="n">dest</span> <span class="o">*</span> <span class="n">src</span><span class="p">;</span>
+<span class="n">dest</span> <span class="o">*=</span> <span class="n">src</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>intmul和add/sub不一样的就是，intmul的结果存放位置必须是一个寄存器，而且它不支持8位整型的操作。</p>
+</div>
+<div class="section" id="bound">
+<h2><a class="toc-backref" href="#id29">bound</a><a class="headerlink" href="#bound" title="Permalink to this headline">¶</a></h2>
+<p>检查寄存器中的值是否在某个范围之内。</p>
+<div class="highlight-asm"><div class="highlight"><pre>bound(reg16, LBconstant, UBconstant);
+bound(reg32, LBconstant, UBconstant);
+
+bound(reg16, Mem16[2]); // [2]表示为存储器中两个连续的字
+bound(reg32, Mem32[2]); // [2]表示为存储器中两个连续的双字
+</pre></div>
+</div>
+<p>它的语义类似于高级语言中的：</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">LBconstant</span> <span class="o">&lt;=</span> <span class="n">reg16</span><span class="o">/</span><span class="n">reg32</span> <span class="o">&lt;=</span> <span class="n">UBconstant</span>
+<span class="n">Mem16</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">reg16</span> <span class="o">&lt;=</span> <span class="n">Mem16</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">Mem16</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">reg32</span> <span class="o">&lt;=</span> <span class="n">Mem32</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>如果指定的寄存器值不在指定范围内，则会引发异常ex.BoundInstr。</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>80x86不存在bound(reg, LBconstant, UBconstant)这种格式的指令。</p>
+<p class="last">HLA是通过生成两个连续的只读的内存变量，来实现该格式的指令，本质上还是用bound(reg, Mem[2])。</p>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>program BoundDemo;
+    #include(&quot;stdlib.hhf&quot;)
+
+    static
+        InputValue: int32;
+        GoodInput: boolean;
+
+begin BoundDemo;
+    repeat
+        mov(false, InputValue);
+        try
+            stdout.put(&quot;Enter an integer between 1 and 10: &quot;);
+            stdin.flushInput();
+            stdin.geti32();
+            mov(eax, InputValue);
+            bound(eax, 1, 10);
+            mov(true, GoodInput);
+        exception(ex.ConversionError)
+            stdout.put(&quot;Illegal numeric format, re-enter&quot;, nl);
+        exception(ex.ValueOutOfRange)
+            stdout.put(&quot;Value is *way* too big, re-enter&quot;, nl);
+        exception(ex.BoundInstr)
+            stdout.put(&quot;Value was &quot;, InputValue, &quot;, must be in 1 and 10, re-enter&quot;, nl);
+        endtry;
+
+    until(GoodInput);
+    stdout.put(&quot;The value you entered, &quot;, InputValue, &quot; is valid.&quot;, nl);
+
+end BoundDemo;
+</pre></div>
+</div>
+</div>
+<div class="section" id="into-interrupt-on-overflow">
+<h2><a class="toc-backref" href="#id30">into(interrupt on overflow)</a><a class="headerlink" href="#into-interrupt-on-overflow" title="Permalink to this headline">¶</a></h2>
+<p>用来快速检查有符号运算是否溢出。</p>
+<p>如果overflow标志被set了，into指令就会抛出异常ex.IntoInstr。</p>
+<div class="highlight-asm"><div class="highlight"><pre>program IntoDemo;
+    #include(&quot;stdlib.hhf&quot;)
+
+    static
+        LOperand: int8;
+        ResultOp: int8;
+
+begin IntoDemo;
+    try
+        stdout.put(&quot;Enter a small integer value (-128...+127):&quot;);
+        stdin.geti8();
+        mov(al, LOperand);
+        stdout.put(&quot;Enter a second small integer value (-128...+127):&quot;);
+        stdin.geti8();
+        add(LOperand, al);
+        into();
+        stdout.put(&quot;The eight-bit sum is &quot;, (type int8 al), nl);
+
+    exception(ex.ConversionError)
+        stdout.put(&quot;You entered illegal characters in the number&quot;, nl);
+    exception(ex.ValueOutOfRange)
+        stdout.put(&quot;The value must be in the range -128...+127&quot;, nl);
+    exception(ex.IntoInstr)
+        stdout.put(&quot;The sum of the two value is outside the range -128...+127&quot;, nl);
+
+    endtry;
+
+end IntoDemo;
+</pre></div>
+</div>
+</div>
+<div class="section" id="hla">
+<h2><a class="toc-backref" href="#id31">HLA常量和数值声明</a><a class="headerlink" href="#hla" title="Permalink to this headline">¶</a></h2>
+<p>HLA的const和var段都允许声明常量。</p>
+<p>const段允许声明在整个编译和运行过程中值为常量的标识符。</p>
+<p>var段允许声明在编译期可变，在运行时必须是常量的标识符。</p>
+<div class="highlight-asm"><div class="highlight"><pre>const
+    pi:          real32  := 3.14159;
+    MaxIndex:    uns32   := 15;
+    Delimiter:   char    := &#39;/&#39;;
+    BitMask:     byte    := $F0;
+    DebugActive: boolean := true;
+
+// 如果常量的类型很明确，则可以省略类型说明。
+const
+    pi:          := 3.14159; // real80
+    MaxIndex:    := 15;      // uns32
+    Delimiter:   := &#39;/&#39;;     // char
+    DebugActive: := true;    // boolean
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>program ConstDemo;
+    #include(&quot;stdlib.hhf&quot;)
+
+    const
+        MemToAllocate   := 4_000_000;
+        NumDWords       := MemToAllocate div 4;
+        MisalignBy      := 62;
+        MainRepetitions := 1000;
+        DataRepetitions := 999_900;
+        CacheLineSize   := 16;
+
+begin ConstDemo;
+    stdout.put(
+        &quot;Memory Alignment Exercise&quot;, nl, nl,
+        &quot;Using a watch(preferably a stopwatch), time the execution of&quot;, nl,
+        &quot;the following code to determine how many seconds it takes to&quot;, nl,
+        &quot;execute.&quot;, nl, nl,
+        &quot;Press Enter to begin timing the code:&quot;
+    );
+    malloc(MemToAllocate);
+    mov(NumDWords, ecx);
+    repeat
+        dec(ecx);
+        mov(0, (type dword [eax+ecx*4]));
+    until(!ecx);
+
+    stdin.readLn();
+    mov(MainRepetitions, edx);
+    add(MisalignBy, eax);
+
+    repeat
+        mov(DataRepetitions, ecx);
+        align(CacheLineSize);
+        repeat
+            sub(4, ecx);
+            mov([eax+ecx*4], ebx);
+            mov([eax+ecx*4], ebx);
+            mov([eax+ecx*4], ebx);
+            mov([eax+ecx*4], ebx);
+        until(!ecx);
+        dec(edx);
+    until(!edx);
+
+    stdout.put(stdio.bell, &quot;Stop timing and record time spent&quot;, nl, nl);
+    stdout.put(&quot;Press enter again to begin timing access to aligned variable:&quot;);
+    stdin.readLn();
+
+    mov(MainRepetitions, edx);
+    sub(MisalignBy, eax);
+    repeat
+        mov(DataRepetitions, ecx);
+        align(CacheLineSize);
+        repeat
+            sub(4, ecx);
+            mov([eax+ecx*4], ebx);
+            mov([eax+ecx*4], ebx);
+            mov([eax+ecx*4], ebx);
+            mov([eax+ecx*4], ebx);
+        until(!ecx);
+        dec(edx);
+    until(!edx);
+
+    stdout.put(stdio.bell, &quot;Stop timing and record time spent&quot;, nl, nl);
+    free(eax);
+
+end ConstDemo;
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h3><a class="toc-backref" href="#id32">字符串常量和字符常量</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>字符串常量是由ASCII双引号括起来的0个或者多个字符构成的序列。</p>
+<div class="highlight-asm"><div class="highlight"><pre>&quot;This is a string&quot;
+&quot;&quot;
+&quot;a&quot;
+&quot;123&quot;
+</pre></div>
+</div>
+<p>字符常量有两种形式。比较常见的是下面这种：</p>
+<div class="highlight-asm"><div class="highlight"><pre>&#39;a&#39;
+&#39;1&#39;
+</pre></div>
+</div>
+<p>还一种格式是：</p>
+<div class="highlight-asm"><div class="highlight"><pre>#integer_constant
+
+// &#39;a&#39;
+#13
+#$d
+#%1101
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3><a class="toc-backref" href="#id33">字符串常量和文本常量</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>const
+    AStringConst: string := &quot;123&quot;;
+    ATextConst:   text   := &quot;123&quot;;
+</pre></div>
+</div>
+<p>文本常量使用text类型来定义，它的行为很类似于C语言中的#define宏定义，HAL编译器遇到ATextConst都会将之替代为123。</p>
+<div class="highlight-asm"><div class="highlight"><pre>// 两者相等
+mov(ATextConst, al);
+mov(123, al);
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3><a class="toc-backref" href="#id34">常量表达式</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>Identifier : typeName := constant_expression;
+Identifier := constant_expression;
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>const
+   x := 1;
+   y := 2;
+   sum := x + y;
+</pre></div>
+</div>
+</div>
+<div class="section" id="val">
+<h3><a class="toc-backref" href="#id35">val段</a><a class="headerlink" href="#val" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>val InitialValue  := 0;
+const SomeVal     := InitialValue + 1; // 1
+const AnotherVal  := InitialValue + 2; // 2
+
+val InitialValue  := 100;
+const ALargerVal  := InitialValue;     // 100
+const LargeValTwo := InitialValue * 2; // 200
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3><a class="toc-backref" href="#id36">在程序的任意位置修改val段中的对象</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>?ValIndentifier := constant_expression;
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>program VALDemo;
+    #include(&quot;stdlib.hhf&quot;)
+    val
+        NotSoConstant := 0;
+
+begin VALDemo;
+    mov(NotSoConstant, eax);
+    stdout.put(&quot;EAX = &quot;, (type uns32 eax), nl);
+
+    ?NotSoConstant := 10;
+    mov(NotSoConstant, eax);
+    stdout.put(&quot;EAX = &quot;, (type uns32 eax), nl);
+
+    ?NotSoConstant := 20;
+    mov(NotSoConstant, eax);
+    stdout.put(&quot;EAX = &quot;, (type uns32 eax), nl);
+
+    ?NotSoConstant := 30;
+    mov(NotSoConstant, eax);
+    stdout.put(&quot;EAX = &quot;, (type uns32 eax), nl);
+
+end VALDemo;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="type">
+<h2><a class="toc-backref" href="#id37">type段</a><a class="headerlink" href="#type" title="Permalink to this headline">¶</a></h2>
+<p>通过type段，可以为各种类型创建别名。</p>
+<div class="highlight-asm"><div class="highlight"><pre>type
+    integer: int32;
+    float:   real32;
+    double:  real64;
+    colors:  byte;
+
+static
+    i:          integer;
+    x:          float;
+    HouseColor: colors;
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">当然type段功能不只创建别名，其它功能以后的讲到。</p>
+</div>
+</div>
+<div class="section" id="enum">
+<h2><a class="toc-backref" href="#id38">枚举类型(enum)</a><a class="headerlink" href="#enum" title="Permalink to this headline">¶</a></h2>
+<p>HAL默认情况为enum类型保留一个字节的存储空间。</p>
+<div class="highlight-asm"><div class="highlight"><pre>type
+    enumTypeID: enum{comma_spearated_list_of_names};
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>//   const
+//       TapeDAT := 1;
+//       Tape8mm := TapeDAT + 1;
+//       TapeQIC80 := Tape8mm + 1;
+//       TapeTravan := TapeQIC80 + 1;
+//       TapeDLT := TapeTravan + 1;
+
+type
+    TapeDrives: enum{TapeDAT, Tape8mm, TapeQIC80, TapeTravan, TapeDAT};
+
+static
+    BackupUnit: TapeDrives := TapeDAT;
+</pre></div>
+</div>
+<p>在上面的示例中：TapeDAT=0, Tape8mm=1, TapeQIC80=2, TapeTrava=3, TapeDAT=4，这些值都是HLA自动关联的。</p>
+<p>在程序的其它地方也可以使用TapeXXX这些常量，就像它们在const段定义了一样。</p>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id39">指针数据类型</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>指针是一个存储单元，只不过它存储的是另一个存储单元的内存地址。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    b: byte;
+    d: dword;
+    pByteVar: pointer to byte := &amp;b;
+    pDWordVar: pointer to dword := &amp;d;
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">取址操作只能用来获取静态变量（static、readonly、storage）的地址。</p>
+</div>
+<p>自定义指针类型。</p>
+<div class="highlight-asm"><div class="highlight"><pre>type
+    ptrChar: pointer to char;
+
+static
+    cString: ptrChar;
+</pre></div>
+</div>
+<div class="section" id="id7">
+<h3><a class="toc-backref" href="#id40">指针常量和指针常量表达式</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>&amp;StaticVarName[PureConstantExpression]
+&amp;StaticVarName + PureConstantExpression
+&amp;StaticVarName - PureConstantExpression
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>program PtrConstDemo;
+     #include(&quot;stdlib.hhf&quot;)
+     static
+         b: byte := 0;
+         byte 1, 2, 3, 4, 5, 6, 7;
+
+     const
+         pb := &amp;b + 1;
+
+begin PtrConstDemo;
+     mov(pb, ebx);
+     mov([ebx], al);
+     stdout.put(&quot;Value at address pb = $&quot;, al, nl);
+
+end PtrConstDemo;
+</pre></div>
+</div>
+</div>
+<div class="section" id="realloc">
+<h3><a class="toc-backref" href="#id41">realloc</a><a class="headerlink" href="#realloc" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>realloc(ExistingPointer, NewSize);
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3><a class="toc-backref" href="#id42">常见问题</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>使用没有初始化的指针</li>
+<li>使用具有非法数值的指针（例如NULL）</li>
+<li>在存储区释放后仍然使用malloc分配的存储区</li>
+<li>在程序使用完后没有释放存储区</li>
+<li>使用错误的数据类型间接访问数据</li>
+</ol>
+<div class="highlight-asm"><div class="highlight"><pre>// 以第一种/第二种问题举例
+// 该程序会抛出Memory Access Violation异常
+program UninitPtrDemo;
+    #include(&quot;stdlib.hhf&quot;)
+
+    static
+        Uninitialized: pointer to byte; // HLA会初始化为NULL
+
+begin UninitPtrDemo;
+    mov(Uninitialized, ebx);
+    mov([ebx], al);
+    stdout.put(&quot;Value at address Uninitialized := $&quot;, al, nl);
+
+end UninitPtrDemo;
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>// 以第五种问题举例
+program BadTypePtrDemo;
+    #include(&quot;stdlib.hhf&quot;)
+
+    static
+        ptr: pointer to char; // 保存输入的字符
+        cnt: uns32; // 记录输入的字符数
+
+begin BadTypePtrDemo;
+
+    malloc(256);
+    mov(eax, ptr);
+
+    stdout.put(&quot;Enter a line of text:&quot;);
+    stdin.flushInput();
+    mov(0, cnt);
+    mov(ptr, ebx);
+
+    repeat
+        stdin.getc();
+        mov(al, [ebx]);
+        inc(cnt);
+        inc(ebx);
+    until(stdin.eoln());
+
+    mov(ptr, ebx);
+    for(mov(cnt, ecx); ecx &gt; 0; dec(ecx)) do
+        mov([ebx], eax);
+        stdout.put(&quot;Current value is $&quot;, eax, nl);
+        inc(ebx);
+    endfor;
+    free(ptr);
+
+end BadTypePtrDemo;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2><a class="toc-backref" href="#id43">字符串</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id10">
+<h3><a class="toc-backref" href="#id44">以0结尾的字符串</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>这种字符串在C语言中很常见。</p>
+<p>不好之处就是它内部不能包含0字符，获取其长度时，必须要遍历整个字符串。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    //
+    zeroTerminatedString: char; @nostorage;
+    byte &quot;This is the zero-terminated string&quot;, 0;
+
+    zstrVar: zstring := &amp;zeroTerminatedString;
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>// 求一个以\0结尾的字符串长度
+mov(&amp;zeroTerminatedString, ebx);
+mov(0, eax);
+while((type byte [ebx+eax]) != 0) do
+    inc(eax);
+endwhile;
+// eax中的值就为字符串的长度
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3><a class="toc-backref" href="#id45">长度前缀字符串</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<p>这种字符串的第一个字节为本身的长度，所以其最大长度是有限制的。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    lengthPrefixedString: char; @nostorage;
+    byte 3, &quot;abc&quot;;
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h3><a class="toc-backref" href="#id46">HLA字符串</a><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<p>HLA字符串综合两者的优点，只不过要花费的内存空间比上两者大一点。</p>
+<p>HLA字符串包含四个部分。</p>
+<ol class="arabic simple">
+<li>一个双字的数值，指定了字符串可以包含的最大字符数。</li>
+<li>一个双字的数值，指定了当前字符串的长度。</li>
+<li>字符串的一系列字符。</li>
+<li>0</li>
+</ol>
+<p>下面的代码就创建一个与HLA兼容的字符串。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    align(4);
+    dword 11;
+    dword 11;
+    TheString: char; @nostorage;
+    byte &quot;Hello there&quot;;
+    byte 0;
+</pre></div>
+</div>
+<p>HLA创建字符串时，会在一个隐藏存储区保存字符串的最大字符数和当前长度。然后将字面字符串的第一个字符的地址赋给字符串变量。所以字符串变量是 <strong>指针</strong> 。</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p>由于HLA会将字符串中的一系列字符保存在只读段，所以不能修改字符串的内容。</p>
+<p class="last">可以改变字符串变量指向的字符串，因为字符串变量是一个指针。</p>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    InitializedString: string := &quot;This is my string&quot;;
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>program StrDemo;
+    #include(&quot;stdlib.hhf&quot;)
+    static
+        theString: string := &quot;String of length 19&quot;;
+
+begin StrDemo;
+    mov(theString, ebx);
+    mov([ebx-4], eax);
+    mov([ebx-8], ecx);
+
+    stdout.put(
+        &quot;theString = &#39;&quot;, theString, &quot; &#39; &quot;, nl,
+        &quot;length(theString )=&quot;, (type uns32 eax), nl,
+        &quot;maxLength(theString )=&quot;, (type uns32 ecx), nl
+    );
+
+end StrDemo;
+</pre></div>
+</div>
+<p>上面的代码直接进行硬编码[ebx-4]、[ebx-8]，所以更安全的做法是使用str.strRec。</p>
+<div class="highlight-asm"><div class="highlight"><pre>program LenMaxLenDemo;
+    #include(&quot;stdlib.hhf&quot;)
+    static
+        theString: string := &quot;String of length 19&quot;;
+
+begin LenMaxLenDemo;
+    mov(theString, ebx);
+    mov((type str.strRec [ebx]).length, eax);
+    mov((type str.strRec [ebx]).MasStrLen, eax);
+
+    stdout.put(
+        &quot;theString = &#39;&quot;, theString, &quot; &#39; &quot;, nl,
+        &quot;length(theString )=&quot;, (type uns32 eax), nl,
+        &quot;maxLength(theString )=&quot;, (type uns32 ecx), nl
+    );
+
+end LenMaxLenDemo;
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-alloc">
+<h3><a class="toc-backref" href="#id47">str.alloc</a><a class="headerlink" href="#str-alloc" title="Permalink to this headline">¶</a></h3>
+<p>str.alloc专门为字符串分配存储区。</p>
+<p>它将字符串最大长度当作参数传入，然后将当前长度初始化为0，在字符串第一个字符位置存储一个0，然后将该字符的地址保存到eax中。</p>
+<p>对应释放函数就是str.free。</p>
+<div class="highlight-asm"><div class="highlight"><pre>program strallocDemo;
+    #include(&quot;stdlib.hhf&quot;)
+    static
+        theString: string;
+
+begin strallocDemo;
+    str.alloc(16);
+    mov(eax, theString);
+    stdout.put(&quot;Enter a line of text (16 chars, max):&quot;);
+    stdin.flushInput();
+    stdin.gets(theString);
+
+    stdout.put(&quot;The string you entered was: &quot;, theString, nl);
+
+    str.free(theString);
+
+end strallocDemo;
+</pre></div>
+</div>
+</div>
+<div class="section" id="stdin-a-gets">
+<h3><a class="toc-backref" href="#id48">stdin.a_gets</a><a class="headerlink" href="#stdin-a-gets" title="Permalink to this headline">¶</a></h3>
+<p>许多HLA函数会自动完成分配内存的工作，这样的函数一般以 <cite>a_</cite> 打头。</p>
+<p>stdin.a_gets就会将str.alloc和stdin.gets的功能结合在一起。</p>
+<div class="highlight-asm"><div class="highlight"><pre>program strallocDemo;
+    #include(&quot;stdlib.hhf&quot;)
+    static
+        theString: string;
+
+begin strallocDemo;
+    stdout.put(&quot;Enter a line of text (16 chars, max):&quot;);
+    stdin.flushInput();
+    stdin.a_gets();
+    mov(eax, theString);
+
+    stdout.put(&quot;The string you entered was: &quot;, theString, nl);
+
+    str.free(theString);
+
+end strallocDemo;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id13">
+<h2><a class="toc-backref" href="#id49">访问字符串中的字符</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-asm"><div class="highlight"><pre>// 获取字符串第四个字符
+mov(s, ebx);
+mov([ebx+3], al);
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>// 循环获取字符串中的字符
+mov(s, ebx);
+mov(index, ecx);
+
+if (ecx &lt; (type str.strRec [ebx]).Length) then
+    mov([ebx+ecx], al);
+else
+    raise(ex.StringIndexError);
+endif;
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h2><a class="toc-backref" href="#id50">其它操作字符串函数</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id15">
+<h3><a class="toc-backref" href="#id51">引用复制</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<p>通过引用来达到“复制字符串”的目的。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    string1: string := &quot;Some String Data&quot;;
+    string2: string;
+
+    ...
+
+    mov(string1, eax);
+    mov(eax, string2);
+
+    ...
+</pre></div>
+</div>
+<p>不过这样有一个坏处，由于两个字符串变量引用了同一个字符串，当改变其中一个，另外一个也是改变。</p>
+<div class="highlight-asm"><div class="highlight"><pre>program strRefAssignDemo;
+    #include(&quot;stdlib.hhf&quot;)
+    static
+        string1: string;
+        string2: string;
+
+begin strRefAssignDemo;
+    forever
+        stdout.put(&quot;Enter a string with at least three characters:&quot;);
+        stdin.a_gets();
+        mov(eax, string1);
+        breakif((type str.strRec [eax]).length &gt;= 3);
+        stdout.put(&quot;Please enter a string with at least three chars.&quot;, nl);
+    endfor;
+
+    stdout.put(&quot;You entered: &#39;&quot;, string1, &quot;&#39;&quot;, nl);
+    mov(string1, ebx);
+    mov(ebx, string2);
+
+    stdout.put(&quot;String1=&#39;&quot;, string1, &quot;&#39;&quot;, nl);
+    stdout.put(&quot;String2=&#39;&quot;, string2, &quot;&#39;&quot;, nl);
+
+    mov(&#39;a&#39;, (type char [ebx]));
+    mov(&#39;b&#39;, (type char [ebx+1]));
+    mov(&#39;c&#39;, (type char [ebx+2]));
+
+    stdout.put(
+        &quot;After assigning &#39;abc&#39; to the first three characters in string1:&quot;,
+        nl,
+        nl
+    );
+
+    stdout.put(&quot;String1=&#39;&quot;, string1, &quot;&#39;&quot;, nl);
+    stdout.put(&quot;String2=&#39;&quot;, string2, &quot;&#39;&quot;, nl);
+
+    str.free(string1);
+
+end strRefAssignDemo;
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p>由于上面代码中的字符串是在堆段中生成的，所以可以修改。</p>
+<p class="last">但是在static中直接申明的，就无法修改了。</p>
+</div>
+</div>
+<div class="section" id="str-cpy">
+<h3><a class="toc-backref" href="#id52">str.cpy</a><a class="headerlink" href="#str-cpy" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>str.cpy(source_string, destination_string);
+</pre></div>
+</div>
+<p>source_string和destination_string必须是字符串变量（指针）。</p>
+<p>str.cpy会检查目的destination_string的最大长度，如果其destination_string小于source_string的当前长度，str.cpy会抛出ex.StringOverFlow异常。</p>
+<p>如果检查通过，则将source_string中的当前长度和所有字符复制到destination_string中。</p>
+<div class="highlight-asm"><div class="highlight"><pre>program strcpyDemo;
+    #include(&quot;stdlib.hhf&quot;)
+    static
+        string1: string;
+        string2: string;
+
+begin strcpyDemo;
+    str.alloc(64);
+    mov(eax, string2);
+
+    forever
+        stdout.put(&quot;Enter a string with at least three characters:&quot;);
+        stdin.a_gets();
+        mov(eax, string1);
+        breakif((type str.strRec [eax]).length &gt;= 3);
+        stdout.put(&quot;Please enter a string with at least three characters.&quot;, nl);
+    endfor;
+
+    str.cpy(string1, string2);
+
+    stdout.put(&quot;String1=&#39;&quot;, string1, &quot;&#39;&quot;, nl);
+    stdout.put(&quot;String2=&#39;&quot;, string2, &quot;&#39;&quot;, nl);
+
+    mov(string1, ebx);
+    mov(&#39;a&#39;, (type char [ebx]));
+    mov(&#39;b&#39;, (type char [ebx+1]));
+    mov(&#39;c&#39;, (type char [ebx+2]));
+
+    stdout.put(
+        &quot;After assigning &#39;abc&#39; to the first three characters in string1:&quot;,
+        nl,
+        nl
+    );
+
+    stdout.put(&quot;String1=&#39;&quot;, string1, &quot;&#39;&quot;, nl);
+    stdout.put(&quot;String2=&#39;&quot;, string2, &quot;&#39;&quot;, nl);
+
+    str.free(string1);
+    str.free(string2);
+
+end strcpyDemo;
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-a-cpy">
+<h3><a class="toc-backref" href="#id53">str.a_cpy</a><a class="headerlink" href="#str-a-cpy" title="Permalink to this headline">¶</a></h3>
+<p>它复制完source_string之后，将新的地址存储在eax中。</p>
+<div class="highlight-asm"><div class="highlight"><pre>program strcpyDemo;
+    #include(&quot;stdlib.hhf&quot;)
+    static
+        string1: string;
+        string2: string;
+
+begin strcpyDemo;
+    forever
+        stdout.put(&quot;Enter a string with at least three characters:&quot;);
+        stdin.a_gets();
+        mov(eax, string1);
+        breakif((type str.strRec [eax]).length &gt;= 3);
+        stdout.put(&quot;Please enter a string with at least three characters.&quot;, nl);
+    endfor;
+
+    str.a_cpy(string1);
+    mov(eax, string2);
+
+    stdout.put(&quot;String1=&#39;&quot;, string1, &quot;&#39;&quot;, nl);
+    stdout.put(&quot;String2=&#39;&quot;, string2, &quot;&#39;&quot;, nl);
+
+    mov(string1, ebx);
+    mov(&#39;a&#39;, (type char [ebx]));
+    mov(&#39;b&#39;, (type char [ebx+1]));
+    mov(&#39;c&#39;, (type char [ebx+2]));
+
+    stdout.put(
+        &quot;After assigning &#39;abc&#39; to the first three characters in string1:&quot;,
+        nl,
+        nl
+    );
+
+    stdout.put(&quot;String1=&#39;&quot;, string1, &quot;&#39;&quot;, nl);
+    stdout.put(&quot;String2=&#39;&quot;, string2, &quot;&#39;&quot;, nl);
+
+    str.free(string1);
+    str.free(string2);
+
+end strcpyDemo;
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-length">
+<h3><a class="toc-backref" href="#id54">str.length</a><a class="headerlink" href="#str-length" title="Permalink to this headline">¶</a></h3>
+<p>获取字符串长度。</p>
+<div class="highlight-asm"><div class="highlight"><pre>str.length(Reg32);
+str.length(string_variable);
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-cat-str-a-cat">
+<h3><a class="toc-backref" href="#id55">str.cat&amp;&amp;str.a_cat</a><a class="headerlink" href="#str-cat-str-a-cat" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>str.cat(srcRStr, destLStr);
+str.a_cat(srcLStr, srcRStr);
+</pre></div>
+</div>
+<p>str.cat将srcRStr拼接到destLStr的尾部。</p>
+<p>src.a_cat分配一个新的存储空间，然后将srcLStr、srcRStr复制进去。</p>
+<div class="highlight-asm"><div class="highlight"><pre>program strcatDemo;
+    #include(&quot;stdlib.hhf&quot;)
+    static
+        UserName: string;
+        Hello:    string;
+        a_Hello:  string;
+
+begin strcatDemo;
+    str.alloc(1024);
+    mov(eax, Hello);
+
+    stdout.put(&quot;Enter your name:&quot;);
+    stdin.flushInput();
+    stdin.a_gets();
+    mov(eax, UserName);
+
+    str.cpy(&quot;Hello &quot;, Hello);
+    str.cat(UserName, Hello);
+
+    str.a_cat(&quot;Hello &quot;, UserName);
+    mov(eax, a_Hello);
+
+    stdout.put(&quot;Concatenated string #1 is &#39;&quot;, Hello, &quot;&#39;&quot;, nl);
+    stdout.put(&quot;Concatenated string #2 is &#39;&quot;, a_Hello, &quot;&#39;&quot;, nl);
+
+    str.free(UserName);
+    str.free(Hello);
+    str.free(a_Hello);
+
+end strcatDemo;
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-insert-str-a-insert">
+<h3><a class="toc-backref" href="#id56">str.insert&amp;&amp;str.a_insert</a><a class="headerlink" href="#str-insert-str-a-insert" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>str.insert(src, dest, index);
+src.a_insert(StrToInsert, StrToInsertInto, index);
+</pre></div>
+</div>
+<p>str.insert从dest字符串的index位置插入src。</p>
+<p>str.a_insert分配一个新的存储空间，复制StrToInsertInto，然后再从StrToInsertInto的index位置插入StrToInsert，最后将该存储空间的地址保存在eax中。</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">如果index超过目标字符串的长度，就会和str.cat/str.a_cat的行为一样。</p>
+</div>
+</div>
+<div class="section" id="str-delete-str-a-delete">
+<h3><a class="toc-backref" href="#id57">str.delete&amp;&amp;str.a_delete</a><a class="headerlink" href="#str-delete-str-a-delete" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>str.delete(strng, StartIndex, Length);
+str.a_delete(strng, StartIndex, Length);
+</pre></div>
+</div>
+<p>从strng的StartIndex位置删除长度为Length的字符串。</p>
+</div>
+<div class="section" id="str-substr-str-a-substr">
+<h3><a class="toc-backref" href="#id58">str.substr&amp;&amp;str.a_substr</a><a class="headerlink" href="#str-substr-str-a-substr" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>str.substr(src, dest, StartIndex, Length);
+src.a_substr(src, StartIndex, Length);
+</pre></div>
+</div>
+<p>str.substr将src从StartIndex位置开始，长度为length的字符串复制到dest中。</p>
+<p>str.a_substr的行为类似str.substr，只不过会分配一个新的存储空间来保存新的字符串，且将地址保存在eax中。</p>
+</div>
+<div class="section" id="id16">
+<h3><a class="toc-backref" href="#id59">字符串比较</a><a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<p>最简单的比较方式：</p>
+<div class="highlight-asm"><div class="highlight"><pre>mov(s1, eax);
+if (eax = s2) then
+    &lt;&lt; code &gt;&gt;
+else
+    &lt;&lt; code &gt;&gt;
+endif;
+</pre></div>
+</div>
+<p>但是这种比较方式有缺陷，因为这样只是比较了两个指针，但是有时间我们需要比较字符串内容。</p>
+<div class="highlight-asm"><div class="highlight"><pre>str.eq(src1, src2);
+str.ne(src1, src2);
+str.lt(src1, src2);
+str.le(src1, src2);
+str.gt(src1, src2);
+str.ge(src1, src2);
+</pre></div>
+</div>
+<p>上面的函数都会将src1、src2进行比较，然后将比较结果保存在eax中(true: 1; false: 0)。</p>
+<div class="highlight-asm"><div class="highlight"><pre>stdout.put(&quot;Enter a single word:&quot;);
+stdin.a_gets();
+// if语句支持这种直接比较的写法，
+// 而不需要先比较，再根据eax的值再判断
+if (str.eq(eax, &quot;Hello&quot;)) then
+    stdout.put(&quot;You entered &#39;Hello&#39;&quot;, nl);
+endif;
+str.free(eax);
+</pre></div>
+</div>
+<p>不区分大小进行比较：</p>
+<div class="highlight-asm"><div class="highlight"><pre>str.ieq(src1, src2);
+str.ine(src1, src2);
+str.ilt(src1, src2);
+str.ile(src1, src2);
+str.igt(src1, src2);
+str.ige(src1, src2);
+</pre></div>
+</div>
+</div>
+<div class="section" id="str-index">
+<h3><a class="toc-backref" href="#id60">str.index</a><a class="headerlink" href="#str-index" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>str.index(StrToSearch, SubstrToSearchFor);
+</pre></div>
+</div>
+<p>检查SubstrToSearchFor是否为StrToSearch的子字符串，如果是，则将其在StrToSearch中的位置保存到eax中。</p>
+</div>
+<div class="section" id="str-put">
+<h3><a class="toc-backref" href="#id61">str.put</a><a class="headerlink" href="#str-put" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>str.put(destString, values_to_convert);
+</pre></div>
+</div>
+<p>str.put同stdout.put类似，只不过它是将数据写入到一个字符串。</p>
+<div class="highlight-asm"><div class="highlight"><pre>str.put(destString, &quot; I = &quot;, i:4, &quot;; J = &quot;, j, &quot;; S = &quot;, s);
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id17">
+<h2><a class="toc-backref" href="#id62">字符集</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h2>
+<p>HLA字符集占用16个字节（128位）。</p>
+<img alt="_images/character_set.png" src="_images/character_set.png" />
+<p>0位对应ASCII的0（NUL字符）...65位对应A...</p>
+<p>如果某一位为1,表示该字符集包含该ASCII对应的字符，反之则没有。</p>
+<div class="highlight-asm"><div class="highlight"><pre>// 申明字符集变量
+static
+    CharSetVar: cset;
+</pre></div>
+</div>
+<div class="section" id="bt">
+<h3><a class="toc-backref" href="#id63">bt系列指令</a><a class="headerlink" href="#bt" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>bt(BitNumber, BitsToSet);
+
+bt(reg16, reg16);
+bt(reg32, reg32);
+bt(constant, reg16);
+bt(constant, reg32);
+
+bt(reg16, mem16);
+bt(reg32, mem32);
+bt(constant, mem16);
+bt(constant, mem32);
+</pre></div>
+</div>
+<p>第一个操作数是位数，第二个操作数指定了一个寄存器/存储单元，该寄存器/存储单元中的位数将被复制到进位标记中(&#64;c; carry flag)。</p>
+<p>如果第二个操作数为寄存器，则第一个操作数必须0..n-1(n为第二个操作数的位数)。</p>
+<p>如果第一个操作数是常量，第二操作是一个存储单元，则常量的值必须0..255。</p>
+<div class="highlight-asm"><div class="highlight"><pre>bt(&#39;A&#39;, CharSetVar);
+if (@c) then
+    &lt;&lt; Do something if &#39;A&#39; is a member of the set &gt;&gt;
+endif;
+</pre></div>
+</div>
+<ul>
+<li><p class="first">bts: 位测试并置位</p>
+<p>如果字符不在字符集中，添加之。</p>
+</li>
+<li><p class="first">btr: 位测试并复位</p>
+<p>如果字符在字符集中，删除之。</p>
+</li>
+<li><p class="first">btc: 位测试并取反</p>
+<p>如果字符在字符中，删除之；不在字符集中，添加之。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id18">
+<h3><a class="toc-backref" href="#id64">HLA字符集常量和字符集表达式</a><a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>{&#39;0&#39;, &#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;}
+
+// 上面表达式可缩写为
+{&#39;0&#39;..&#39;9&#39;}
+
+{&#39;0&#39;..&#39;9&#39;, &#39;a&#39;..&#39;z&#39;, &#39;A&#39;..&#39;Z&#39;}
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>CSetConst + CSetConst // 并集
+
+CSetConst * CSetConst // 交集
+
+CSetConst - CSetConst // 差集
+
+-CSetConst // 补集
+</pre></div>
+</div>
+</div>
+<div class="section" id="id19">
+<h3><a class="toc-backref" href="#id65">HLA标准库对字符集的支持</a><a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="cs-empty">
+<h4><a class="toc-backref" href="#id66">cs.empty</a><a class="headerlink" href="#cs-empty" title="Permalink to this headline">¶</a></h4>
+<p>将字符集中所有位都初始化为0。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.empty(Csvar);
+</pre></div>
+</div>
+</div>
+<div class="section" id="cs-cpy">
+<h4><a class="toc-backref" href="#id67">cs.cpy</a><a class="headerlink" href="#cs-cpy" title="Permalink to this headline">¶</a></h4>
+<p>将一个字符集复制到另外一个字符集，覆盖目标字符集中所有数据。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.cpy(srcCsetValue, destCsetVar);
+</pre></div>
+</div>
+<p>srcCsetValue可以为字符集常量/变量；destCsetVar只能为字符集变量。</p>
+</div>
+<div class="section" id="cs-unionchar">
+<h4><a class="toc-backref" href="#id68">cs.unionChar</a><a class="headerlink" href="#cs-unionchar" title="Permalink to this headline">¶</a></h4>
+<p>同bts指令。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.unionChar(CharVar, Csvar);
+</pre></div>
+</div>
+</div>
+<div class="section" id="cs-strtocset">
+<h4><a class="toc-backref" href="#id69">cs.strToCset</a><a class="headerlink" href="#cs-strtocset" title="Permalink to this headline">¶</a></h4>
+<p>生成一个只包含一个字符的集合。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.strToCset(CharValue, Csvar);
+</pre></div>
+</div>
+<p>CharValue可以是8位寄存器、常量、字符变量；Csvar必须是字符集变量。</p>
+<p>本函数将目标字符集清0，然后将指定字符合并到字符集中。</p>
+</div>
+<div class="section" id="cs-removechar">
+<h4><a class="toc-backref" href="#id70">cs.removeChar</a><a class="headerlink" href="#cs-removechar" title="Permalink to this headline">¶</a></h4>
+<p>从字符集中删除某个字符。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.removeChar(CharValue, Csvar);
+</pre></div>
+</div>
+<p>如果该字符不在字符集中，则该函数对字符集无任何影响。</p>
+</div>
+<div class="section" id="cs-rangechar">
+<h4><a class="toc-backref" href="#id71">cs.rangeChar</a><a class="headerlink" href="#cs-rangechar" title="Permalink to this headline">¶</a></h4>
+<p>创建一个字符集，这个字符集包含两个参数之间所有的字符，不在两个参数之间的所有位都置为0。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.rangeChar(LowerBoundChar, UpperBoundChar, Csvar);
+</pre></div>
+</div>
+<p>LowerBoundChar, UpperBoundChar可以是常量、寄存器、字符变量，Csvar必须是字符集变量。</p>
+</div>
+<div class="section" id="id20">
+<h4><a class="toc-backref" href="#id72">cs.strToCSet</a><a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h4>
+<p>创建一个包含某个字符串所有字符的字符集，不在其中的字符所对应位置为0。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.strToCSet(StringValue, CSVar);
+</pre></div>
+</div>
+</div>
+<div class="section" id="cs-unionstr">
+<h4><a class="toc-backref" href="#id73">cs.unionstr</a><a class="headerlink" href="#cs-unionstr" title="Permalink to this headline">¶</a></h4>
+<p>将一个字符串中的字符添加到字符集中，对不在其中的字符不产生影响。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.unionstr(StringValue, CSVar);
+</pre></div>
+</div>
+</div>
+<div class="section" id="cs-setunion">
+<h4><a class="toc-backref" href="#id74">cs.setunion</a><a class="headerlink" href="#cs-setunion" title="Permalink to this headline">¶</a></h4>
+<p>destCset := destCset + srcCset</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.setunion(srcCset, destCset);
+</pre></div>
+</div>
+</div>
+<div class="section" id="cs-intersection">
+<h4><a class="toc-backref" href="#id75">cs.intersection</a><a class="headerlink" href="#cs-intersection" title="Permalink to this headline">¶</a></h4>
+<p>destCset := destCset * srcCset</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.intersection(srcCset, destCset);
+</pre></div>
+</div>
+</div>
+<div class="section" id="cs-difference">
+<h4><a class="toc-backref" href="#id76">cs.difference</a><a class="headerlink" href="#cs-difference" title="Permalink to this headline">¶</a></h4>
+<p>destCset := destCset - srcCset</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.difference(srcCset, destCset);
+</pre></div>
+</div>
+</div>
+<div class="section" id="cs-isempty">
+<h4><a class="toc-backref" href="#id77">cs.IsEmpty</a><a class="headerlink" href="#cs-isempty" title="Permalink to this headline">¶</a></h4>
+<p>测试字符集是否为空集，在eax中保存结果。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.IsEmpty(CsetValue);
+</pre></div>
+</div>
+</div>
+<div class="section" id="cs-member">
+<h4><a class="toc-backref" href="#id78">cs.member</a><a class="headerlink" href="#cs-member" title="Permalink to this headline">¶</a></h4>
+<p>测试一个字符是否在某个字符集中，在eax中保存结果。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.member(CharValue, CsetValue);
+</pre></div>
+</div>
+</div>
+<div class="section" id="cs-set">
+<h4><a class="toc-backref" href="#id79">cs.*set</a><a class="headerlink" href="#cs-set" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-asm"><div class="highlight"><pre>cs.subset(CsetValue1, CsetValue2); // 子集
+cs.psubset(CsetValue1, CsetValue2); // 真子集
+cs.superset(CsetValue1, CsetValue2); // 超集
+cs.psuperset(CsetValue1, CsetValue2); // 真超集
+</pre></div>
+</div>
+<p>比较CsetValue1、CsetValue2，将结果保存在eax中。</p>
+</div>
+<div class="section" id="cs-eq-cs-ne">
+<h4><a class="toc-backref" href="#id80">cs.eq&amp;&amp;cs.ne</a><a class="headerlink" href="#cs-eq-cs-ne" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-asm"><div class="highlight"><pre>cs.eq(CsetValue1, CsetValue2); // 相等
+cs.ne(CsetValue1, CsetValue2); // 不等
+</pre></div>
+</div>
+</div>
+<div class="section" id="cs-extract">
+<h4><a class="toc-backref" href="#id81">cs.extract</a><a class="headerlink" href="#cs-extract" title="Permalink to this headline">¶</a></h4>
+<p>将字符集中的一个字符随机删除，并将该字符保存在eax中。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cs.extract(CsetVar);
+</pre></div>
+</div>
+<p>如果字符集为空，则该函数在eax中保存$FFFF_FFFF(-1)。</p>
+</div>
+</div>
+<div class="section" id="id21">
+<h3><a class="toc-backref" href="#id82">HLA中字符集的使用</a><a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>repeat
+    ...
+
+    repeat
+        stdout.put(&quot;Would you like to play again?&quot;);
+        stdin.flushInput();
+        stdin.get(answer);
+    until(cs.memeber(answer, {&#39;n&#39;, &#39;N&#39;, &#39;Y&#39;, &#39;y&#39;}));
+    if (answer = &#39;N&#39;) then
+        mov(&#39;n&#39;, answer);
+    endif;
+
+until(answer = &#39;n&#39;);
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id22">
+<h2><a class="toc-backref" href="#id83">数组</a><a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/array_layout_in_memory.png" src="_images/array_layout_in_memory.png" />
+<div class="highlight-asm"><div class="highlight"><pre>// 根据索引值index获取数组中对应元素的地址
+Element_Address = Base_Address + ((index-Initial_Index) * Element_Size)
+</pre></div>
+</div>
+<p>Initial_Index是数组中第一个索引的值（一般为0），Element_Size为数组中元素的数据宽度（单位：字节）。</p>
+<div class="highlight-asm"><div class="highlight"><pre>// 声明
+static
+    CharArray: char[128];
+    IntArray:  integer[8];
+    ByteArray: byte[10];
+    PtrArray:  dword[4];
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>// 声明且初始化
+static
+    RealArray:    real32[8]   := [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0];
+    IntegerArray: integer[8]  := [1, 2, 3, 4, 5, 6, 7, 8];
+
+    BigArray:     uns32[1000] := 1000 dup[1];
+    SixteenInts:  int32[16]   := 4 dup[1, 2, 3, 4];
+</pre></div>
+</div>
+</div>
+<div class="section" id="id23">
+<h2><a class="toc-backref" href="#id84">一维数组</a><a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-asm"><div class="highlight"><pre>SixteenInts: int32[16] := 4 dup[1, 2, 3, 4];
+eax := SixteenInts[index];
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>// 访问数组中某一个元素
+
+mov(index, ebx);
+shl(2, ebx); // 4(Element_Size) * ebx
+mov(SixteenInts[ebx], eax); // SixteenInts(Base_Address)
+
+// 或者
+mov(index, ebx);
+mov(SixteenInts[ebx*4], eax);
+
+// 或者
+
+lea(eax, SixteenInts);
+mov(index, ebx);
+shl(2, eax);
+add(eax, ebx);
+mov([ebx], eax);
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>// 通过修改esi，访问数组中多个元素
+lea(ebx, SixteenInts);
+mov(index, esi);
+mov([ebx+esi*4], eax);
+</pre></div>
+</div>
+<div class="section" id="id24">
+<h3><a class="toc-backref" href="#id85">数组排序</a><a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>program ArraySortDemo;
+    #include(&quot;stdlib.hhf&quot;)
+    const
+        NumElements := 16;
+
+    static
+        DataToSort: uns32[NumElements] := [
+            1, 2, 16, 14,
+            3, 9, 4, 10,
+            5, 7, 15, 12,
+            8, 6, 11, 13
+        ];
+        NoSwap: boolean;
+
+begin ArraySortDemo;
+    repeat
+        mov(true, NoSwap);
+        for(mov(0, ebx); ebx &lt;= NumElements-2; inc(ebx)) do
+            mov(DataToSort[ebx*4], eax);
+            if (eax &gt; DataToSort[ebx*4+4]) then
+                // 交换数组中两个相邻的元素
+                mov(DataToSort[ebx*4+4], ecx);
+                mov(ecx, DataToSort[ebx*4]);
+                mov(eax, DataToSort[ebx*4+4]);
+                mov(false, NoSwap);
+            endif;
+        endfor;
+    until(NoSwap);
+
+end ArraySortDemo;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id25">
+<h2><a class="toc-backref" href="#id86">多维数组</a><a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id26">
+<h3><a class="toc-backref" href="#id87">以行为主</a><a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h3>
+<p>这种方式被很多高级语言采用，包括Pacal、C/C++、Java、Ada等等。</p>
+<img alt="_images/row_major_array_element_ordering.png" src="_images/row_major_array_element_ordering.png" />
+<img alt="_images/another_view_of_row_major_ordering_for_a_4x4_array.png" src="_images/another_view_of_row_major_ordering_for_a_4x4_array.png" />
+<p>二维数组偏移量计算：</p>
+<div class="highlight-asm"><div class="highlight"><pre>Element_Address = Base_Address + (colindex * row_size + rowindex) * Element_Size
+</pre></div>
+</div>
+<p>三维数组偏移量计算：</p>
+<div class="highlight-asm"><div class="highlight"><pre>Address = Base + ((depthindex * col_size + colindex) * row_size + rowindex) * Element_Size
+</pre></div>
+</div>
+<p>四维数组偏移量计算：</p>
+<div class="highlight-asm"><div class="highlight"><pre>Address = Base + (((LeftIndex * depth_size + depthindex) * col_size + colindex) * row_size + rowindex) * Element_Size
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">第四章 常量、变量与数据类型</a><ul>
+<li><a class="reference internal" href="#intmul-integer-multiply">intmul(integer multiply)</a></li>
+<li><a class="reference internal" href="#bound">bound</a></li>
+<li><a class="reference internal" href="#into-interrupt-on-overflow">into(interrupt on overflow)</a></li>
+<li><a class="reference internal" href="#hla">HLA常量和数值声明</a><ul>
+<li><a class="reference internal" href="#id2">字符串常量和字符常量</a></li>
+<li><a class="reference internal" href="#id3">字符串常量和文本常量</a></li>
+<li><a class="reference internal" href="#id4">常量表达式</a></li>
+<li><a class="reference internal" href="#val">val段</a></li>
+<li><a class="reference internal" href="#id5">在程序的任意位置修改val段中的对象</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#type">type段</a></li>
+<li><a class="reference internal" href="#enum">枚举类型(enum)</a></li>
+<li><a class="reference internal" href="#id6">指针数据类型</a><ul>
+<li><a class="reference internal" href="#id7">指针常量和指针常量表达式</a></li>
+<li><a class="reference internal" href="#realloc">realloc</a></li>
+<li><a class="reference internal" href="#id8">常见问题</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id9">字符串</a><ul>
+<li><a class="reference internal" href="#id10">以0结尾的字符串</a></li>
+<li><a class="reference internal" href="#id11">长度前缀字符串</a></li>
+<li><a class="reference internal" href="#id12">HLA字符串</a></li>
+<li><a class="reference internal" href="#str-alloc">str.alloc</a></li>
+<li><a class="reference internal" href="#stdin-a-gets">stdin.a_gets</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id13">访问字符串中的字符</a></li>
+<li><a class="reference internal" href="#id14">其它操作字符串函数</a><ul>
+<li><a class="reference internal" href="#id15">引用复制</a></li>
+<li><a class="reference internal" href="#str-cpy">str.cpy</a></li>
+<li><a class="reference internal" href="#str-a-cpy">str.a_cpy</a></li>
+<li><a class="reference internal" href="#str-length">str.length</a></li>
+<li><a class="reference internal" href="#str-cat-str-a-cat">str.cat&amp;&amp;str.a_cat</a></li>
+<li><a class="reference internal" href="#str-insert-str-a-insert">str.insert&amp;&amp;str.a_insert</a></li>
+<li><a class="reference internal" href="#str-delete-str-a-delete">str.delete&amp;&amp;str.a_delete</a></li>
+<li><a class="reference internal" href="#str-substr-str-a-substr">str.substr&amp;&amp;str.a_substr</a></li>
+<li><a class="reference internal" href="#id16">字符串比较</a></li>
+<li><a class="reference internal" href="#str-index">str.index</a></li>
+<li><a class="reference internal" href="#str-put">str.put</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id17">字符集</a><ul>
+<li><a class="reference internal" href="#bt">bt系列指令</a></li>
+<li><a class="reference internal" href="#id18">HLA字符集常量和字符集表达式</a></li>
+<li><a class="reference internal" href="#id19">HLA标准库对字符集的支持</a><ul>
+<li><a class="reference internal" href="#cs-empty">cs.empty</a></li>
+<li><a class="reference internal" href="#cs-cpy">cs.cpy</a></li>
+<li><a class="reference internal" href="#cs-unionchar">cs.unionChar</a></li>
+<li><a class="reference internal" href="#cs-strtocset">cs.strToCset</a></li>
+<li><a class="reference internal" href="#cs-removechar">cs.removeChar</a></li>
+<li><a class="reference internal" href="#cs-rangechar">cs.rangeChar</a></li>
+<li><a class="reference internal" href="#id20">cs.strToCSet</a></li>
+<li><a class="reference internal" href="#cs-unionstr">cs.unionstr</a></li>
+<li><a class="reference internal" href="#cs-setunion">cs.setunion</a></li>
+<li><a class="reference internal" href="#cs-intersection">cs.intersection</a></li>
+<li><a class="reference internal" href="#cs-difference">cs.difference</a></li>
+<li><a class="reference internal" href="#cs-isempty">cs.IsEmpty</a></li>
+<li><a class="reference internal" href="#cs-member">cs.member</a></li>
+<li><a class="reference internal" href="#cs-set">cs.*set</a></li>
+<li><a class="reference internal" href="#cs-eq-cs-ne">cs.eq&amp;&amp;cs.ne</a></li>
+<li><a class="reference internal" href="#cs-extract">cs.extract</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id21">HLA中字符集的使用</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id22">数组</a></li>
+<li><a class="reference internal" href="#id23">一维数组</a><ul>
+<li><a class="reference internal" href="#id24">数组排序</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id25">多维数组</a><ul>
+<li><a class="reference internal" href="#id26">以行为主</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="chapter_03.html"
+                        title="previous chapter">第三章 内存访问与结构</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/chapter_04.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="chapter_03.html" title="第三章 内存访问与结构"
+             >previous</a> |</li>
+        <li><a href="index.html">《汇编语言编程艺术》第2版笔记 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, JaunaryStar.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,666 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>第三章 内存访问与结构 &mdash; 《汇编语言编程艺术》第2版笔记 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="《汇编语言编程艺术》第2版笔记 1.0 documentation" href="index.html" />
+    <link rel="next" title="第四章 常量、变量与数据类型" href="chapter_04.html" />
+    <link rel="prev" title="第二章 数据表示" href="chapter_02.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="chapter_04.html" title="第四章 常量、变量与数据类型"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="chapter_02.html" title="第二章 数据表示"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">《汇编语言编程艺术》第2版笔记 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="id1">
+<h1><a class="toc-backref" href="#id18">第三章 内存访问与结构</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id18">第三章 内存访问与结构</a><ul>
+<li><a class="reference internal" href="#x86-addressing-mode" id="id19">80x86寻址方式(addressing mode)</a><ul>
+<li><a class="reference internal" href="#id2" id="id20">寄存器寻址</a></li>
+<li><a class="reference internal" href="#id3" id="id21">内存寻址</a><ul>
+<li><a class="reference internal" href="#id4" id="id22">位移寻址</a></li>
+<li><a class="reference internal" href="#id5" id="id23">寄存器间接寻址</a></li>
+<li><a class="reference internal" href="#id6" id="id24">变址寻址</a></li>
+<li><a class="reference internal" href="#id7" id="id25">比例变址寻址</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id8" id="id26">运行时内存的结构</a><ul>
+<li><a class="reference internal" href="#code-section" id="id27">代码段(code section)</a></li>
+<li><a class="reference internal" href="#static-section" id="id28">静态段(static section)</a></li>
+<li><a class="reference internal" href="#id9" id="id29">只读数据段</a></li>
+<li><a class="reference internal" href="#id10" id="id30">存储段</a></li>
+<li><a class="reference internal" href="#nostorage" id="id31">&#64;NOSTORAGE属性</a></li>
+<li><a class="reference internal" href="#var" id="id32">Var段</a></li>
+<li><a class="reference internal" href="#hla" id="id33">HLA程序中声明段的结构</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id11" id="id34">字节对齐</a></li>
+<li><a class="reference internal" href="#id12" id="id35">类型强制转换</a></li>
+<li><a class="reference internal" href="#id13" id="id36">栈段</a><ul>
+<li><a class="reference internal" href="#pusha-popa" id="id37">pusha&amp;&amp;popa</a></li>
+<li><a class="reference internal" href="#pushad-popad" id="id38">pushad&amp;&amp;popad</a></li>
+<li><a class="reference internal" href="#pushf-pushfd-pushfd-popfd" id="id39">pushf&amp;&amp;pushfd||pushfd&amp;&amp;popfd</a></li>
+<li><a class="reference internal" href="#id14" id="id40">不使用出栈而从栈内移除数据</a></li>
+<li><a class="reference internal" href="#id15" id="id41">访问已入栈数据但不需要其出栈</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id16" id="id42">堆段</a></li>
+<li><a class="reference internal" href="#inc-dec" id="id43">INC&amp;&amp;DEC指令</a></li>
+<li><a class="reference internal" href="#id17" id="id44">获取存储器对象的地址</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="x86-addressing-mode">
+<h2><a class="toc-backref" href="#id19">80x86寻址方式(addressing mode)</a><a class="headerlink" href="#x86-addressing-mode" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3><a class="toc-backref" href="#id20">寄存器寻址</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>需要操作的数据直接存放寄存器中。</p>
+<div class="highlight-asm"><div class="highlight"><pre>mov(bx, ax);
+mov(al, bl);
+mov(eax, ebx);
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3><a class="toc-backref" href="#id21">内存寻址</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>需要操作的数据存放在内存中。</p>
+<div class="section" id="id4">
+<h4><a class="toc-backref" href="#id22">位移寻址</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>也叫直接寻址，直接根据内存地址来获取/存放数据。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    i: int8 := 23;
+
+mov(i, al);
+mov(al, i);
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h4><a class="toc-backref" href="#id23">寄存器间接寻址</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<p>根据寄存器中保存的内存地址来获取/存放对应内存的数据。</p>
+<div class="highlight-asm"><div class="highlight"><pre>mov([eax], al);
+mov([ebx], al);
+mov([ecx], al);
+mov([edx], al);
+mov([edi], al);
+mov([esi], al);
+mov([ebp], al);
+mov([esp], al);
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>mov(&amp;j, ebx);
+mov(eax, [ebx]);
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">&amp;操作符和C/C++中的不完全一样，它只对静态变量有用。</p>
+</div>
+</div>
+<div class="section" id="id6">
+<h4><a class="toc-backref" href="#id24">变址寻址</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<p>变址寻址支持好几种形式，但在经过编译后，生成的底层机器都是一样的。</p>
+<div class="highlight-asm"><div class="highlight"><pre>mov(VarName[eax], al);
+mov(VarName[ebx], al);
+mov(VarName[ecx], al);
+mov(VarName[edx], al);
+mov(VarName[edi], al);
+mov(VarName[esi], al);
+mov(VarName[ebp], al);
+mov(VarName[esp], al);
+</pre></div>
+</div>
+<p>将 <strong>VarName变量的地址</strong> 加上寄存器中值，得到新的地址，再根据该地址到内存中获取数据。</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">不是VarName变量的值，而是其地址。</p>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">该寻址方式尤其适用于C语言中的数组操作。</p>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>mov([ebx+constant], al);
+mov([ebx-constant], al);
+</pre></div>
+</div>
+<p>将ebx中的地址+/-常量，得到新的地址，再根据该地址到内存中获取数据。</p>
+<div class="highlight-asm"><div class="highlight"><pre>mov(VarName[ebx+constant], al);
+mov(VarName[ebx-constant], al);
+</pre></div>
+</div>
+<p>将VarName的地址+/-constant+ebx，得到新的地址，再根据该地址到内存中获取数据。</p>
+<div class="highlight-asm"><div class="highlight"><pre>mov(constant1[ebx+constant2], al);
+mov([ebx+(constant1+constant2)], al);
+
+mov(constant1[ebx-constant2], al);
+mov([ebx+(constant1-constant2)], al);
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h4><a class="toc-backref" href="#id25">比例变址寻址</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-asm"><div class="highlight"><pre>VarName[IndexReg32*scale]
+VarName[IndexReg32*scale+displcement]
+VarName[IndexReg32*scale-displcement]
+
+[BaseReg32+IndexReg32*scale]
+[BaseReg32+IndexReg32*scale+displcement]
+[BaseReg32+IndexReg32*scale-displcement]
+
+VarName[BaseReg32+IndexReg32*scale]
+VarName[BaseReg32+IndexReg32*scale+displcement]
+VarName[BaseReg32+IndexReg32*scale-displcement]
+</pre></div>
+</div>
+<p>BaseReg32表示任意的32位通用寄存器，</p>
+<p>IndexReg32表示除ESP外的任意一个32位通用寄存器，</p>
+<p>scale为比例因子，必须为常数1、2、4、8之一。</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p>该寻址方式非常适用于大小为2、4、8字节的数组元素。</p>
+<p class="last">不要简单以为二维数组的访问是用该寻址方式实现的，实际上二维数组的访问比这还要复杂。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id8">
+<h2><a class="toc-backref" href="#id26">运行时内存的结构</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>程序在载入到内存时，操作系统会将程序按不同的数据分割为几个段(section/segment)。</p>
+<img alt="_images/hla_typical_runtime_memory_organization.png" src="_images/hla_typical_runtime_memory_organization.png" />
+<div class="section" id="code-section">
+<h3><a class="toc-backref" href="#id27">代码段(code section)</a><a class="headerlink" href="#code-section" title="Permalink to this headline">¶</a></h3>
+<p>存放程序中的指令（机器码）。</p>
+<p>在现代操作系统(Win, Unix, Linux, MacOS)中，代码段是只读的。</p>
+<p>如果在程序运行时，尝试修改代码段中的数据会导致报错。</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">DOS操作系统就可以任意修改代码段中的内容。</p>
+</div>
+<p>HLA还可以通过以下伪操作码将数据存储到代码段中：</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">byte</span>
+<span class="n">word</span>
+<span class="n">dword</span>
+<span class="n">uns8</span>
+<span class="n">uns16</span>
+<span class="n">uns32</span>
+<span class="n">int8</span>
+<span class="n">int16</span>
+<span class="n">int32</span>
+<span class="n">boolean</span>
+<span class="n">char</span>
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>mov(0, ax);
+byte 0, 1, 2, 3;
+add(bx, cx);
+</pre></div>
+</div>
+</div>
+<div class="section" id="static-section">
+<h3><a class="toc-backref" href="#id28">静态段(static section)</a><a class="headerlink" href="#static-section" title="Permalink to this headline">¶</a></h3>
+<p>该段是专门用来存放声明的变量的，它也可以使用伪操作码。</p>
+<p>其中声明的变量即可以初始化，也可以不用初始化。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    b: byte  := 0;
+    byte 1, 2, 3;
+
+    u: uns32 := 1;
+    uns32 5, 2, 10;
+
+    c: char;
+    char &#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;, &#39;e&#39;, &#39;f&#39;;
+
+    bn: boolean;
+    boolean true;
+</pre></div>
+</div>
+<p>由于伪操作码插入的数据没有对应的标识，所以不能直接对它们进行访问，不过可以通过变址寻址的方式来访问。</p>
+</div>
+<div class="section" id="id9">
+<h3><a class="toc-backref" href="#id29">只读数据段</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>该段存放常量、表以及其它一些在程序执行中不可更改的数据，它也可以使用伪操作码。</p>
+<p>该段中的变量都要初始化。</p>
+<div class="highlight-asm"><div class="highlight"><pre>readonly
+    pi:     real32 := 3.14159;
+    e:      real32 := 2.71;
+    MaxU16: uns16  := 65_535;
+    MaxI16: int16  := 32_767;
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>readonly
+    roArray:byte := 0;
+    byte 1, 2, 3, 4, 5;
+
+    qwVal: qword := 1;
+    qword 0;
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3><a class="toc-backref" href="#id30">存储段</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>该段中的变量总是未初始化，初始化工作由操作系统来完成，它不可以使用伪操作码。</p>
+<p>由于不包含初始化值，所以该段所占用的磁盘空间会少一些。</p>
+</div>
+<div class="section" id="nostorage">
+<h3><a class="toc-backref" href="#id31">&#64;NOSTORAGE属性</a><a class="headerlink" href="#nostorage" title="Permalink to this headline">¶</a></h3>
+<p>该属性允许在静态声明段（静态段、只读数据段、存储段）中声明变量，但并不为这些变量分配实际的存储空间，只需要将声明段中的当前地址分配给变量即可。</p>
+<div class="highlight-asm"><div class="highlight"><pre>readonly
+    abcd: dword; nostorage:
+    byte &#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;;
+</pre></div>
+</div>
+</div>
+<div class="section" id="var">
+<h3><a class="toc-backref" href="#id32">Var段</a><a class="headerlink" href="#var" title="Permalink to this headline">¶</a></h3>
+<p>用来创建自动变量。由于该段中声明的变量是在运行时创建的，HLA不允许在该段中对所声明的变量进行初始化。</p>
+<p>HLA将该段中声明的变量分配到栈存储段。</p>
+<div class="highlight-asm"><div class="highlight"><pre>var
+    vInt: int32;
+    vChar: char;
+</pre></div>
+</div>
+</div>
+<div class="section" id="hla">
+<h3><a class="toc-backref" href="#id33">HLA程序中声明段的结构</a><a class="headerlink" href="#hla" title="Permalink to this headline">¶</a></h3>
+<p>静态段、只读数据段、存储段、var段在program和begin之间，可出现0到多次，且无顺序要求。</p>
+<div class="highlight-asm"><div class="highlight"><pre>program demo;
+    static
+        i_static: int32;
+
+    var
+        i_auto: int32;
+
+    storage
+        i_uninit: int32;
+
+    readonly
+        i_readonly: int32 := 5;
+
+    statc
+        j: uns32;
+
+    var
+        k: char;
+
+    readonly
+        i2: uns8 := 9;
+
+    storage
+        c: char;
+
+    storage
+        d: dword;
+
+begin demo;
+    &lt;&lt; code goes here &gt;&gt;
+
+end demo;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id11">
+<h2><a class="toc-backref" href="#id34">字节对齐</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-asm"><div class="highlight"><pre>align(integer_constant);
+</pre></div>
+</div>
+<p>integer_constant必须为1、2、4、8、16之一。</p>
+<p>align指令会将紧接其后的变量对齐到指定对齐常量的偶数倍地址上。</p>
+<p>其原理就是用多余的字节来进行填充。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    align(4);
+    dw: dword;
+    b: byte;
+    align(2);
+    w: word;
+    align(4);
+    dw2: dword;
+    w2: word;
+    b2: byte;
+    align(4);
+    dw3: dword;
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>现代80x86CPU的缓存机制实际上处理了绝大部分的不对齐数据，</p>
+<p class="last">因为只有在快速访问相当关键的情况下才使用对齐指令。</p>
+</div>
+</div>
+<div class="section" id="id12">
+<h2><a class="toc-backref" href="#id35">类型强制转换</a><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-asm"><div class="highlight"><pre>(type newTypeName addressExpression)
+</pre></div>
+</div>
+<p>类型强制转换操作符只是告诉编译器将指定的表达式作为特定的类型来处理，不做额外的事情。</p>
+<div class="highlight-asm"><div class="highlight"><pre>mov((typ word byte_values), ax);
+
+not((type byte [ebx]));
+not((type dword [ebx]));
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>不要滥用类型强制转换操作。</p>
+<div class="highlight-asm"><div class="highlight"><pre>mov(eax, (type dword byteVar));
+</pre></div>
+</div>
+<p class="last">上面这条语句会将byteVar后面三个字节的数据覆盖。</p>
+</div>
+<p>在布尔表达式中，HLA问题将寄存器作为无符号值来进行判断，但有时需要将其当作有有符号值来判断，这就需要进行寄存器类型强制转换。</p>
+</div>
+<div class="section" id="id13">
+<h2><a class="toc-backref" href="#id36">栈段</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<p>08x86CPU通过ESP来控制栈。</p>
+<div class="highlight-asm"><div class="highlight"><pre>push(reg16);
+push(reg32);
+push(memory16);
+push(memory32);
+pushw(constant);
+pushd(constant);
+</pre></div>
+</div>
+<p>push指令进行了如下的操作：</p>
+<div class="highlight-python"><div class="highlight"><pre>ESP := ESP - Size_of_Register_or_Memory_Operand (2 or 4)
+[ESP] := Operand&#39;s_Value
+</pre></div>
+</div>
+<img alt="_images/push_operation.png" src="_images/push_operation.png" />
+<div class="section" id="pusha-popa">
+<h3><a class="toc-backref" href="#id37">pusha&amp;&amp;popa</a><a class="headerlink" href="#pusha-popa" title="Permalink to this headline">¶</a></h3>
+<p>pusha将所有16位寄存器入栈，主要用于DOS之类的16位操作系统中，在现代操作系统中很少用到。</p>
+<p>popa则按照pusha相反的顺序出栈。</p>
+<p>具体操作如下：</p>
+<div class="highlight-asm"><div class="highlight"><pre>// pusha();
+push(ax);
+push(cx);
+push(dx);
+push(bx);
+push(sp);
+push(bp);
+push(si);
+push(di);
+
+// popa();
+pop(di);
+pop(si);
+pop(bp);
+pop(sp);
+pop(bx);
+pop(dx);
+pop(cx);
+pop(ax);
+</pre></div>
+</div>
+</div>
+<div class="section" id="pushad-popad">
+<h3><a class="toc-backref" href="#id38">pushad&amp;&amp;popad</a><a class="headerlink" href="#pushad-popad" title="Permalink to this headline">¶</a></h3>
+<p>pushad将所有32位寄存器入栈；pop按照pushad相反顺序出栈。</p>
+<p>具体操作如下：</p>
+<div class="highlight-asm"><div class="highlight"><pre>// pushad();
+push(eax);
+push(ecx);
+push(edx);
+push(ebx);
+push(esp);
+push(ebp);
+push(esi);
+push(edi);
+
+// popad();
+pop(edi);
+pop(esi);
+pop(ebp);
+pop(esp);
+pop(ebx);
+pop(edx);
+pop(ecx);
+pop(eax);
+</pre></div>
+</div>
+</div>
+<div class="section" id="pushf-pushfd-pushfd-popfd">
+<h3><a class="toc-backref" href="#id39">pushf&amp;&amp;pushfd||pushfd&amp;&amp;popfd</a><a class="headerlink" href="#pushf-pushfd-pushfd-popfd" title="Permalink to this headline">¶</a></h3>
+<p>pushf将16位EFLAGS寄存器入栈；popf按照pushf相反顺序出栈。</p>
+<p>pushfd将32位EFLAGS寄存器入栈；popfd按照pushfd相反顺序出栈。</p>
+</div>
+<div class="section" id="id14">
+<h3><a class="toc-backref" href="#id40">不使用出栈而从栈内移除数据</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<p>由于CPU是使用ESP来表示栈顶位置的，所以可以直接修改ESP的值来移除栈内数据。</p>
+<div class="highlight-asm"><div class="highlight"><pre>push(eax);
+push(ebx);
+
+if (expression) then
+    add(8, esp); // remove unneeded EAX and EBX values
+else
+    pop(ebx);
+    pop(eax);
+endif
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">记住，要保持栈对准某个双字边界，因此在移除数据时，应该总是将4的偶数倍常量与ESP相加。</p>
+</div>
+</div>
+<div class="section" id="id15">
+<h3><a class="toc-backref" href="#id41">访问已入栈数据但不需要其出栈</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>push(eax);
+push(ebx);
+
+// 将eax中的值保存到edx中
+mov([esp+4], edx);
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id16">
+<h2><a class="toc-backref" href="#id42">堆段</a><a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h2>
+<p>程序中动态（运行时）分配或者回收的存储区都分配在堆段。</p>
+<p>HAL提供malloc和free来处理存储空间的分配和回收。</p>
+<div class="highlight-asm"><div class="highlight"><pre>mem.alloc(Number_of_Bytes_Requested);
+</pre></div>
+</div>
+<p>Number_of_Bytes_Requested为一个dword，指定了所需的存储区字节数。</p>
+<p>mem.alloc会将该存储区的首字节指针给EAX寄存器。</p>
+<div class="highlight-asm"><div class="highlight"><pre>// @size为HLA内置的编译时函数，
+// 计算某个数据类型的数据宽度
+// 它返回一个无符号整型常量
+mem.alloc(@size(uns32));
+mov(1234, (type uns32 [eax]));
+mem.free(eax);
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">如果使用mem.alloc分配内存失败，HAL会抛出ex.MemoryAllocationFAilure异常。</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>最好使用mem.alloc为数组或者大的结构分配存储区。</p>
+<p class="last">mem.alloc实际分配的存储区会比参数中请求的要大一些，mem.alloc需要额外的空间来跟踪所分配/释放的区域。</p>
+</div>
+</div>
+<div class="section" id="inc-dec">
+<h2><a class="toc-backref" href="#id43">INC&amp;&amp;DEC指令</a><a class="headerlink" href="#inc-dec" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-asm"><div class="highlight"><pre>inc(mem/reg); // 加1
+dec(mem/reg); // 减1
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>mem.alloc(128);
+
+for(mov(0, ebx); ebx &lt; 128; inc(ebx)) do
+    mov(0, (type byte [eax+ebx]));
+endfor;
+
+mem.free(eax);
+</pre></div>
+</div>
+</div>
+<div class="section" id="id17">
+<h2><a class="toc-backref" href="#id44">获取存储器对象的地址</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h2>
+<p>&amp;符号只能获取静态变量的地址，而lea指令可以获取其它存储器对象的地址。</p>
+<div class="highlight-asm"><div class="highlight"><pre>lea(reg32, Memory_operand);
+</pre></div>
+</div>
+<p>lea指令的第一参数为32位寄存器，第二参数为任何合法的内存引用，可以使用任何合法的寻址方式，该指令会将指定存储单元的地址加载到寄存器中。</p>
+<div class="highlight-asm"><div class="highlight"><pre>program Demo;
+    #include(&quot;stdlib.hhf&quot;)
+
+    static
+        b: byte; @nostorage;
+        byte 7, 0, 6, 1, 5, 2, 4, 3;
+
+begin Demo;
+    lea(ebx, b);
+    for (mov(0, ecx); ecx &lt; 8; inc(ecx)) do
+        stdout.put(&quot;[ebx+ecx]=&quot;, (type byte [ebx+ecx]), nl);
+
+    endfor;
+
+end Demo;
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">第三章 内存访问与结构</a><ul>
+<li><a class="reference internal" href="#x86-addressing-mode">80x86寻址方式(addressing mode)</a><ul>
+<li><a class="reference internal" href="#id2">寄存器寻址</a></li>
+<li><a class="reference internal" href="#id3">内存寻址</a><ul>
+<li><a class="reference internal" href="#id4">位移寻址</a></li>
+<li><a class="reference internal" href="#id5">寄存器间接寻址</a></li>
+<li><a class="reference internal" href="#id6">变址寻址</a></li>
+<li><a class="reference internal" href="#id7">比例变址寻址</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id8">运行时内存的结构</a><ul>
+<li><a class="reference internal" href="#code-section">代码段(code section)</a></li>
+<li><a class="reference internal" href="#static-section">静态段(static section)</a></li>
+<li><a class="reference internal" href="#id9">只读数据段</a></li>
+<li><a class="reference internal" href="#id10">存储段</a></li>
+<li><a class="reference internal" href="#nostorage">&#64;NOSTORAGE属性</a></li>
+<li><a class="reference internal" href="#var">Var段</a></li>
+<li><a class="reference internal" href="#hla">HLA程序中声明段的结构</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id11">字节对齐</a></li>
+<li><a class="reference internal" href="#id12">类型强制转换</a></li>
+<li><a class="reference internal" href="#id13">栈段</a><ul>
+<li><a class="reference internal" href="#pusha-popa">pusha&amp;&amp;popa</a></li>
+<li><a class="reference internal" href="#pushad-popad">pushad&amp;&amp;popad</a></li>
+<li><a class="reference internal" href="#pushf-pushfd-pushfd-popfd">pushf&amp;&amp;pushfd||pushfd&amp;&amp;popfd</a></li>
+<li><a class="reference internal" href="#id14">不使用出栈而从栈内移除数据</a></li>
+<li><a class="reference internal" href="#id15">访问已入栈数据但不需要其出栈</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id16">堆段</a></li>
+<li><a class="reference internal" href="#inc-dec">INC&amp;&amp;DEC指令</a></li>
+<li><a class="reference internal" href="#id17">获取存储器对象的地址</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="chapter_02.html"
+                        title="previous chapter">第二章 数据表示</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="chapter_04.html"
+                        title="next chapter">第四章 常量、变量与数据类型</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/chapter_03.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="chapter_04.html" title="第四章 常量、变量与数据类型"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="chapter_02.html" title="第二章 数据表示"
+             >previous</a> |</li>
+        <li><a href="index.html">《汇编语言编程艺术》第2版笔记 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, JaunaryStar.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

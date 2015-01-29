@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>第二章 数据表示 &mdash; 《汇编语言编程艺术》第2版笔记 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="《汇编语言编程艺术》第2版笔记 1.0 documentation" href="index.html" />
+    <link rel="next" title="第三章 内存访问与结构" href="chapter_03.html" />
+    <link rel="prev" title="第一章 汇编语言之Hello, World" href="chapter_01.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="chapter_03.html" title="第三章 内存访问与结构"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="chapter_01.html" title="第一章 汇编语言之Hello, World"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">《汇编语言编程艺术》第2版笔记 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="id1">
+<h1><a class="toc-backref" href="#id18">第二章 数据表示</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id1" id="id18">第二章 数据表示</a><ul>
+<li><a class="reference internal" href="#bytes" id="id19">Bytes</a></li>
+<li><a class="reference internal" href="#words" id="id20">Words</a></li>
+<li><a class="reference internal" href="#double-words" id="id21">Double Words</a></li>
+<li><a class="reference internal" href="#quad-words-long-words" id="id22">Quad Words&amp;&amp;Long Words</a></li>
+<li><a class="reference internal" href="#id2" id="id23">逻辑操作</a></li>
+<li><a class="reference internal" href="#id3" id="id24">取反操作</a></li>
+<li><a class="reference internal" href="#id4" id="id25">无符号类型</a><ul>
+<li><a class="reference internal" href="#id5" id="id26">无符号类型申明</a></li>
+<li><a class="reference internal" href="#id6" id="id27">无符号类型输出</a></li>
+<li><a class="reference internal" href="#id7" id="id28">无符号类型输入</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id8" id="id29">符号扩展、零扩展</a></li>
+<li><a class="reference internal" href="#id9" id="id30">移位</a></li>
+<li><a class="reference internal" href="#id10" id="id31">循环移位</a></li>
+<li><a class="reference internal" href="#id11" id="id32">位域和压缩数据</a></li>
+<li><a class="reference internal" href="#id12" id="id33">浮点计算</a><ul>
+<li><a class="reference internal" href="#ieee" id="id34">IEEE浮点格式</a></li>
+<li><a class="reference internal" href="#id13" id="id35">类型声明</a></li>
+<li><a class="reference internal" href="#id14" id="id36">输出与输入</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id15" id="id37">字符</a><ul>
+<li><a class="reference internal" href="#id16" id="id38">类型声明</a></li>
+<li><a class="reference internal" href="#id17" id="id39">输出与输入</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="bytes">
+<h2><a class="toc-backref" href="#id19">Bytes</a><a class="headerlink" href="#bytes" title="Permalink to this headline">¶</a></h2>
+<p>虽然byte和int8都是一个字节，但是int8是有类型的，表示-128~127，而byte则是无类型的，仅表示一个字节，你可以在里面存放任意一个字节存放得下的数据。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    b: byte;
+</pre></div>
+</div>
+</div>
+<div class="section" id="words">
+<h2><a class="toc-backref" href="#id20">Words</a><a class="headerlink" href="#words" title="Permalink to this headline">¶</a></h2>
+<p>word和int16的区别同上。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    w: word;
+</pre></div>
+</div>
+</div>
+<div class="section" id="double-words">
+<h2><a class="toc-backref" href="#id21">Double Words</a><a class="headerlink" href="#double-words" title="Permalink to this headline">¶</a></h2>
+<p>dword和int32的区别同上。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    dw: dword;
+</pre></div>
+</div>
+</div>
+<div class="section" id="quad-words-long-words">
+<h2><a class="toc-backref" href="#id22">Quad Words&amp;&amp;Long Words</a><a class="headerlink" href="#quad-words-long-words" title="Permalink to this headline">¶</a></h2>
+<p>qword和int64的区别、lword和int128的区别同上。</p>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    i64: int64;
+    i128: int128;
+
+static
+    qw: qword;
+    lw: lword;
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">这些数据不能直接用于mov/add/sub等这些常见的指令的，因为它们超过32位了。</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id23">逻辑操作</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-asm"><div class="highlight"><pre>and(source, dest);
+or(source, dest);
+xor(source, dest);
+</pre></div>
+</div>
+<p>上面三个操作对应的高级语言语义如下：</p>
+<div class="highlight-python"><div class="highlight"><pre>dest = dest operator source
+</pre></div>
+</div>
+<p>and/or/xor的source必须为常量、内存、寄存器，dest必须为内存或者寄存器。这三个的其它要求基本和add/sub这些是一样的。</p>
+<div class="highlight-asm"><div class="highlight"><pre>not(dest);
+</pre></div>
+</div>
+<p>not对应的高级语言语义如下：</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">dest</span> <span class="o">=</span> <span class="ow">not</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>not的dest必须为内存、寄存器。</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id24">取反操作</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-asm"><div class="highlight"><pre>neg(dest);
+</pre></div>
+</div>
+<p>neg对应的高级语言主义如下：</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">dest</span> <span class="o">=</span> <span class="o">-</span><span class="n">dest</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id25">无符号类型</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h3><a class="toc-backref" href="#id26">无符号类型申明</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    u8: uns8;
+    u16: uns16;
+    u32: uns32;
+    u64: uns64;
+    u128: uns128;
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3><a class="toc-backref" href="#id27">无符号类型输出</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre><span class="nf">stdout.putu8</span>
+<span class="nf">stdout.putu16</span>
+<span class="nf">stdout.putu32</span>
+<span class="nf">stdout.putu64</span>
+<span class="nf">stdout.putu128</span>
+
+<span class="nf">stdout.putu8Size</span>
+<span class="nf">stdout.putu16Size</span>
+<span class="nf">stdout.putu32Size</span>
+<span class="nf">stdout.putu64Size</span>
+<span class="nf">stdout.putu128Size</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h3><a class="toc-backref" href="#id28">无符号类型输入</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre><span class="nf">stdin.getu8</span>
+<span class="nf">stdin.getu16</span>
+<span class="nf">stdin.getu32</span>
+<span class="nf">stdin.getu64</span>
+<span class="nf">stdin.getu128</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id8">
+<h2><a class="toc-backref" href="#id29">符号扩展、零扩展</a><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>如果将一个8位的负数（补码表示）扩展为16位，只需要将其高位用符号位进行扩展即可。</p>
+<p>如果将一个8位的无符号数扩展为16位，只需要将其高位用0进行扩展即可。</p>
+<div class="highlight-asm"><div class="highlight"><pre>cbw(); // 通过符号扩展将al中的字节转换为ax中的字
+cwd(); // 将ax中的字转换为dx:ax中的双字
+cdq(); // 将eax中的双字转换为edx:eax中的四字
+cwde(); // 将ax中的字转换为eax中的双字
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>movsx(source, dest); // 符号扩展
+movzx(source, dest); // 零扩展
+</pre></div>
+</div>
+<p>movsx和movzx需要注意一点：</p>
+<div class="highlight-python"><div class="highlight"><pre>dest的数据宽度必须大于source的数据宽度
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2><a class="toc-backref" href="#id30">移位</a><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-asm"><div class="highlight"><pre>shl(count, dest); // 左移
+shr(count, dest); // 右移
+</pre></div>
+</div>
+<p>如果dest为负数，shr操作就会产生意料之外的结果，符号位被0填充，结果变成了正数。这种情况就需要使用如下指令：</p>
+<div class="highlight-asm"><div class="highlight"><pre>sar(count, dest);
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h2><a class="toc-backref" href="#id31">循环移位</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-asm"><div class="highlight"><pre>rol(count, dest); // 循环左移
+ror(count, dest); // 循环右移
+</pre></div>
+</div>
+<p>如果仅移1个位，则移出的那一位会进入CF标志位。如果多于1位，Intel不保证CF标志位的状态。</p>
+<p>如果想让CF中的值也参与循环移位，可以用以下指令：</p>
+<div class="highlight-asm"><div class="highlight"><pre>rcl(count, dest); // 带CF循环左移
+rcr(count, dest); // 带CF循环右移
+</pre></div>
+</div>
+<p>同样的，如果多于1位，Intel不保证CF标志位的状态。</p>
+</div>
+<div class="section" id="id11">
+<h2><a class="toc-backref" href="#id32">位域和压缩数据</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<p>通过上面介绍的逻辑操作就可以操作每个字节中一位或者多位了。</p>
+<p>对于EFLAGS寄存器，还有额外的指令提供：</p>
+<img alt="_images/instructions_that_affect_certain_flags.png" src="_images/instructions_that_affect_certain_flags.png" />
+<div class="highlight-asm"><div class="highlight"><pre>lahf(); // EFLAGS低8位-&gt;ah
+sahf(); // ah-&gt;EFLAGS低8位
+</pre></div>
+</div>
+</div>
+<div class="section" id="id12">
+<h2><a class="toc-backref" href="#id33">浮点计算</a><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>When substracting two numbers with the same signs or adding two numbers with different signs, the accuracy of the result may be less than the precision avaiable in the floating-point format.</li>
+<li>When performing a chain of calculations involving addition, substraction, multiplication, and division, try to perform the multiplication and division operations first.</li>
+<li>When multiplying and dividing sets of numbers, try to arrange the multiplications so that they multiply large and small numbers together; likewise, try to divide numbers that have the same relative magnitudes.</li>
+<li>When comparing two floating-point numbers, always compare one value to see if it is in the range given by the second value plus or minus some small error value.</li>
+</ul>
+<div class="section" id="ieee">
+<h3><a class="toc-backref" href="#id34">IEEE浮点格式</a><a class="headerlink" href="#ieee" title="Permalink to this headline">¶</a></h3>
+<img alt="_images/single_percision_floating_point_format.png" src="_images/single_percision_floating_point_format.png" />
+<img alt="_images/double_percision_floating_point_format.png" src="_images/double_percision_floating_point_format.png" />
+<img alt="_images/extended_percision_floating_point_format.png" src="_images/extended_percision_floating_point_format.png" />
+</div>
+<div class="section" id="id13">
+<h3><a class="toc-backref" href="#id35">类型声明</a><a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    fltVar1:  real32; // 单精度
+    fltVar1a: real32 := 2.7;
+    pi:       real32 := 3.14159;
+    DblVar:   real64; // 双精度
+    DblVar2:  real64 := 1.23456789e+10;
+    XPVar:    real80; // 扩展精度
+    XPVar2:   real80 := -1.0e-104;
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h3><a class="toc-backref" href="#id36">输出与输入</a><a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>stdout.putr80(r:real80, width:uns32, decpts:uns32);
+stdout.putr64(r:real64, width:uns32, decpts:uns32);
+stdout.putr32(r:real32, width:uns32, decpts:uns32);
+</pre></div>
+</div>
+<p>width为输出的宽度，decpts为输出的小数点精度</p>
+<div class="highlight-asm"><div class="highlight"><pre>// 输出科学表达法
+stout.pute80(r:real80, width:uns32);
+stout.pute64(r:real64, width:uns32);
+stout.pute32(r:real32, width:uns32);
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>stdin.getf();
+stdin.get();
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id15">
+<h2><a class="toc-backref" href="#id37">字符</a><a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id16">
+<h3><a class="toc-backref" href="#id38">类型声明</a><a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>static
+    UserInput:      char;
+    TheCharA:       char := &#39;A&#39;;
+    ExtendedChar:   char := #65;
+    ExtendedChar1:  char := #$41;
+    ExtendedChar1:  char := #%0100_0001;
+</pre></div>
+</div>
+</div>
+<div class="section" id="id17">
+<h3><a class="toc-backref" href="#id39">输出与输入</a><a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-asm"><div class="highlight"><pre>stdout.putc(charvar);
+stdout.putcSize(charvar, widthInt32, fillchar);
+</pre></div>
+</div>
+<div class="highlight-asm"><div class="highlight"><pre>stdout.getc();
+stdout.get();
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">第二章 数据表示</a><ul>
+<li><a class="reference internal" href="#bytes">Bytes</a></li>
+<li><a class="reference internal" href="#words">Words</a></li>
+<li><a class="reference internal" href="#double-words">Double Words</a></li>
+<li><a class="reference internal" href="#quad-words-long-words">Quad Words&amp;&amp;Long Words</a></li>
+<li><a class="reference internal" href="#id2">逻辑操作</a></li>
+<li><a class="reference internal" href="#id3">取反操作</a></li>
+<li><a class="reference internal" href="#id4">无符号类型</a><ul>
+<li><a class="reference internal" href="#id5">无符号类型申明</a></li>
+<li><a class="reference internal" href="#id6">无符号类型输出</a></li>
+<li><a class="reference internal" href="#id7">无符号类型输入</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id8">符号扩展、零扩展</a></li>
+<li><a class="reference internal" href="#id9">移位</a></li>
+<li><a class="reference internal" href="#id10">循环移位</a></li>
+<li><a class="reference internal" href="#id11">位域和压缩数据</a></li>
+<li><a class="reference internal" href="#id12">浮点计算</a><ul>
+<li><a class="reference internal" href="#ieee">IEEE浮点格式</a></li>
+<li><a class="reference internal" href="#id13">类型声明</a></li>
+<li><a class="reference internal" href="#id14">输出与输入</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id15">字符</a><ul>
+<li><a class="reference internal" href="#id16">类型声明</a></li>
+<li><a class="reference internal" href="#id17">输出与输入</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="chapter_01.html"
+                        title="previous chapter">第一章 汇编语言之Hello, World</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="chapter_03.html"
+                        title="next chapter">第三章 内存访问与结构</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/chapter_02.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="chapter_03.html" title="第三章 内存访问与结构"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="chapter_01.html" title="第一章 汇编语言之Hello, World"
+             >previous</a> |</li>
+        <li><a href="index.html">《汇编语言编程艺术》第2版笔记 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, JaunaryStar.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
